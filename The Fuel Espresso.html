@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Fuel Espresso | Specialty Coffee Shop & Café — DHA Phase 6, Lahore</title>
+    <meta name="description" content="Discover bold coffee, handcrafted specialty espresso, refreshing iced lattes, organic matcha, and artisanal drinks at The Fuel Espresso, Sector C, DHA Phase 6, Lahore.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        espresso: '#120d0a',
+                        darkroast: '#1c1510',
+                        warmcream: '#f9f6f0',
+                        coffeebrown: '#5c3a21',
+                        caramel: '#c88a48',
+                        mutedbronze: '#8c6d46',
+                        goldaccent: '#d4af37',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- React & Babel Core CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-espresso text-warmcream font-sans antialiased selection:bg-caramel selection:text-espresso">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // ==========================================
+        // CENTRAL EDITABLE CONFIGURATION
+        // ==========================================
+        const CONFIG = {
+            businessName: "The Fuel Espresso",
+            tagline: "Fuel Your Day. One Great Cup at a Time.",
+            address: "The Fuel Cafe, Sector C, DHA Phase 6, Lahore, Punjab, Pakistan",
+            phone: "+92 329 5361794",
+            formattedPhone: "+923295361794",
+            mapsLink: "https://maps.app.goo.gl/Tt3kakzH2mRFTcqM7",
+            foodpandaLink: "https://www.foodpanda.pk/restaurant/z0kd/the-fuel",
+            directoryLink: "https://www.snapchat.com/place/thefuelespresso/534894ea-eef0-46b4-9347-aa06a3f46c0b",
+            currency: "PKR",
+            deliveryFee: 150,
+            openingHours: "Mon – Sun: 08:00 AM – 01:00 AM",
+            isDemo: true
+        };
+
+        // ==========================================
+        // PROVISIONAL DIGITAL MENU DATASET
+        // ==========================================
+        const MENU_CATEGORIES = [
+            "All Items",
+            "Popular Picks",
+            "Hot Coffee",
+            "Iced Coffee",
+            "Signature Lattes",
+            "Filter Coffee",
+            "Frappes",
+            "Hot & Iced Chocolate",
+            "Shakes",
+            "Mojitos & Chillers",
+            "Organic Matcha"
+        ];
+
+        const MENU_PRODUCTS = [
+            {
+                id: "p1",
+                name: "Hot Spanish Latte",
+                category: "Signature Lattes",
+                price: 850,
+                description: "Rich espresso combined with silky steamed milk and sweetened condensed milk.",
+                image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=600",
+                isPopular: true,
+                isSignature: true
+            },
+            {
+                id: "p2",
+                name: "Iced Spanish Latte",
+                category: "Iced Coffee",
+                price: 890,
+                description: "Double espresso poured over cold whole milk, condensed milk, and fresh ice.",
+                image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=600",
+                isPopular: true,
+                isSignature: true
+            },
+            {
+                id: "p3",
+                name: "Pistachio Latte",
+                category: "Signature Lattes",
+                price: 990,
+                description: "Espresso blended with handcrafted roasted pistachio sauce and creamy milk.",
+                image: "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&q=80&w=600",
+                isPopular: true,
+                isSignature: true
+            },
+            {
+                id: "p4",
+                name: "Classic Cappuccino",
+                category: "Hot Coffee",
+                price: 720,
+                description: "Equal balance of double shot espresso, velvety steamed milk, and dense foam.",
+                image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p5",
+                name: "Americano (Hot / Iced)",
+                category: "Hot Coffee",
+                price: 620,
+                description: "Double origin espresso diluted with hot water or poured over cold spring water & ice.",
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p6",
+                name: "Belgian Chocolate Frappe",
+                category: "Frappes",
+                price: 950,
+                description: "Blended ice drink featuring premium Belgian chocolate cocoa and whipped cream.",
+                image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&q=80&w=600",
+                isPopular: true
+            },
+            {
+                id: "p7",
+                name: "Pistachio Frappe",
+                category: "Frappes",
+                price: 1050,
+                description: "Decadent iced blended drink with pistachios, espresso cream, and caramelized crunch.",
+                image: "https://images.unsplash.com/photo-1579954115545-aad516f2d206?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p8",
+                name: "Salted Caramel Hot Chocolate",
+                category: "Hot & Iced Chocolate",
+                price: 820,
+                description: "Creamy melted cocoa laced with sea-salted caramel syrup and toasted marshmallows.",
+                image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p9",
+                name: "Strawberry Matcha Latte",
+                category: "Organic Matcha",
+                price: 980,
+                description: "Ceremonial grade Japanese Uji matcha over crushed fresh strawberries and cold oat milk.",
+                image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=600",
+                isPopular: true,
+                isSignature: true
+            },
+            {
+                id: "p10",
+                name: "Raspberry Matcha",
+                category: "Organic Matcha",
+                price: 980,
+                description: "Hand-whisked matcha layered with tart house-made raspberry reduction and milk.",
+                image: "https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p11",
+                name: "Strawberry Mojito",
+                category: "Mojitos & Chillers",
+                price: 750,
+                description: "Sparkling soda muddled with wild strawberries, mint leaves, crushed ice, and lemon.",
+                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=600",
+                isPopular: false
+            },
+            {
+                id: "p12",
+                name: "Mango Chiller",
+                category: "Mojitos & Chillers",
+                price: 780,
+                description: "Refreshing frozen puree of ripe Chaunsa mangoes, lime juice, and botanical syrup.",
+                image: "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&q=80&w=600",
+                isPopular: true
+            }
+        ];
+
+        const GALLERY_IMAGES = [
+            { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800", caption: "Artisanal Coffee Bar Atmosphere" },
+            { url: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800", caption: "Precision Espresso Extraction" },
+            { url: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=800", caption: "Handcrafted Iced Spanish Lattes" },
+            { url: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=800", caption: "Ceremonial Grade Matcha Creations" },
+            { url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800", caption: "Specialty Cold Brew Brews" },
+            { url: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&q=80&w=800", caption: "Decadent Specialty Frappes" }
+        ];
+
+        // ==========================================
+        // MAIN COMPONENT
+        // ==========================================
+        function App() {
+            const [cart, setCart] = useState(() => {
+                const saved = localStorage.getItem('fuel_espresso_cart');
+                return saved ? JSON.parse(saved) : [];
+            });
+            
+            const [selectedCategory, setSelectedCategory] = useState("All Items");
+            const [searchQuery, setSearchQuery] = useState("");
+            const [isCartOpen, setIsCartOpen] = useState(false);
+            const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            const [lightboxImg, setLightboxImg] = useState(null);
+            
+            // Customer Form State
+            const [customerInfo, setCustomerInfo] = useState({
+                name: '',
+                phone: '',
+                orderType: 'pickup',
+                address: '',
+                notes: ''
+            });
+
+            // Persist Cart
+            useEffect(() => {
+                localStorage.setItem('fuel_espresso_cart', JSON.stringify(cart));
+            }, [cart]);
+
+            // Filtered Products
+            const filteredProducts = useMemo(() => {
+                return MENU_PRODUCTS.filter(item => {
+                    const matchesCategory = 
+                        selectedCategory === "All Items" ? true :
+                        selectedCategory === "Popular Picks" ? item.isPopular :
+                        item.category === selectedCategory;
+
+                    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+                    return matchesCategory && matchesSearch;
+                });
+            }, [selectedCategory, searchQuery]);
+
+            // Cart Calculations
+            const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const finalTotal = subtotal > 0 ? subtotal + (customerInfo.orderType === 'delivery' ? CONFIG.deliveryFee : 0) : 0;
+
+            // Cart Actions
+            const addToCart = (product) => {
+                setCart(prev => {
+                    const exists = prev.find(i => i.id === product.id);
+                    if (exists) {
+                        return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+                    }
+                    return [...prev, { ...product, quantity: 1 }];
+                });
+                setIsCartOpen(true);
+            };
+
+            const updateQuantity = (id, delta) => {
+                setCart(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const newQty = item.quantity + delta;
+                        return newQty > 0 ? { ...item, quantity: newQty } : null;
+                    }
+                    return item;
+                }).filter(Boolean));
+            };
+
+            const removeFromCart = (id) => {
+                setCart(prev => prev.filter(item => item.id !== id));
+            };
+
+            // WhatsApp Message Generator
+            const handleWhatsAppCheckout = (e) => {
+                e.preventDefault();
+                if (!customerInfo.name || !customerInfo.phone) {
+                    alert('Please complete required fields (Name and Phone).');
+                    return;
+                }
+
+                let msg = `*NEW ORDER - THE FUEL ESPRESSO*\n`;
+                msg += `------------------------------------\n`;
+                msg += `*Name:* ${customerInfo.name}\n`;
+                msg += `*Phone:* ${customerInfo.phone}\n`;
+                msg += `*Type:* ${customerInfo.orderType.toUpperCase()}\n`;
+                if (customerInfo.orderType === 'delivery') {
+                    msg += `*Address:* ${customerInfo.address}\n`;
+                }
+                if (customerInfo.notes) {
+                    msg += `*Notes:* ${customerInfo.notes}\n`;
+                }
+                msg += `------------------------------------\n`;
+                msg += `*ORDER ITEMS:*\n`;
+                cart.forEach(item => {
+                    msg += `• ${item.name} x${item.quantity} - PKR ${item.price * item.quantity}\n`;
+                });
+                msg += `------------------------------------\n`;
+                msg += `*Subtotal:* PKR ${subtotal}\n`;
+                if (customerInfo.orderType === 'delivery') {
+                    msg += `*Delivery Fee:* PKR ${CONFIG.deliveryFee}\n`;
+                }
+                msg += `*TOTAL AMOUNT:* PKR ${finalTotal}\n\n`;
+                msg += `*(Note: Demo Web Order Request)*`;
+
+                const encodedMsg = encodeURIComponent(msg);
+                window.open(`https://wa.me/${CONFIG.formattedPhone}?text=${encodedMsg}`, '_blank');
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col relative">
+                    
+                    {/* DEMO NOTICE BANNER */}
+                    <div className="bg-caramel/20 text-caramel border-b border-caramel/30 px-4 py-2 text-xs md:text-sm text-center font-medium">
+                        ✨ <strong>Demo Concept Notice:</strong> This website is an interactive proposal designed for <strong>The Fuel Espresso</strong>, DHA Phase 6, Lahore. Menu items, prices, and settings are provisional.
+                    </div>
+
+                    {/* STICKY HEADER */}
+                    <header className="sticky top-0 z-40 bg-espresso/90 backdrop-blur-md border-b border-white/10 transition-all">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                            
+                            {/* BRAND WORDMARK */}
+                            <a href="#" className="flex items-center gap-2 group">
+                                <div className="w-10 h-10 rounded-full bg-caramel/10 border border-caramel/40 flex items-center justify-center text-caramel font-serif text-xl font-bold group-hover:bg-caramel group-hover:text-espresso transition-all">
+                                    F
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-serif text-xl font-bold tracking-wider text-warmcream group-hover:text-caramel transition-colors">THE FUEL</span>
+                                    <span className="text-[10px] tracking-[0.25em] text-caramel uppercase font-semibold">Espresso</span>
+                                </div>
+                            </a>
+
+                            {/* DESKTOP NAV */}
+                            <nav className="hidden lg:flex items-center gap-8 text-sm font-medium tracking-wide text-warmcream/80">
+                                <a href="#home" className="hover:text-caramel transition-colors">Home</a>
+                                <a href="#story" className="hover:text-caramel transition-colors">Our Story</a>
+                                <a href="#menu" className="hover:text-caramel transition-colors">Menu</a>
+                                <a href="#signature" className="hover:text-caramel transition-colors">Signature Drinks</a>
+                                <a href="#gallery" className="hover:text-caramel transition-colors">Gallery</a>
+                                <a href="#visit" className="hover:text-caramel transition-colors">Visit Us</a>
+                            </nav>
+
+                            {/* ACTIONS */}
+                            <div className="flex items-center gap-4">
+                                <button 
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="relative p-2.5 rounded-full bg-darkroast border border-white/10 hover:border-caramel/50 text-warmcream hover:text-caramel transition-all"
+                                    aria-label="View Shopping Cart"
+                                >
+                                    <i data-lucide="shopping-bag" className="w-5 h-5"></i>
+                                    {cartTotalCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-caramel text-espresso font-bold text-[11px] w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                                            {cartTotalCount}
+                                        </span>
+                                    )}
+                                </button>
+
+                                <a 
+                                    href="#menu" 
+                                    className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-caramel hover:bg-caramel/90 text-espresso font-semibold text-sm transition-all shadow-lg shadow-caramel/20 hover:scale-105"
+                                >
+                                    Order Now
+                                </a>
+
+                                {/* MOBILE MENU BUTTON */}
+                                <button 
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                    className="lg:hidden p-2 rounded-lg bg-darkroast text-warmcream hover:text-caramel"
+                                >
+                                    <i data-lucide={isMobileMenuOpen ? "x" : "menu"} className="w-6 h-6"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* MOBILE NAVIGATION DRAWER */}
+                        {isMobileMenuOpen && (
+                            <div className="lg:hidden bg-darkroast border-b border-white/10 px-6 py-6 space-y-4 text-warmcream font-medium">
+                                <a href="#home" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/5 hover:text-caramel">Home</a>
+                                <a href="#story" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/5 hover:text-caramel">Our Story</a>
+                                <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/5 hover:text-caramel">Menu</a>
+                                <a href="#signature" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/5 hover:text-caramel">Signature Drinks</a>
+                                <a href="#gallery" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/5 hover:text-caramel">Gallery</a>
+                                <a href="#visit" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 hover:text-caramel">Visit Us</a>
+                            </div>
+                        )}
+                    </header>
+
+                    {/* HERO SECTION */}
+                    <section id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-20">
+                        {/* Background Overlay */}
+                        <div className="absolute inset-0 z-0">
+                            <img 
+                                src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=1920" 
+                                alt="Specialty Coffee Dark Aesthetic" 
+                                className="w-full h-full object-cover object-center opacity-30 scale-105 animate-pulse"
+                                style={{ animationDuration: '10s' }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/80 to-transparent"></div>
+                        </div>
+
+                        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-caramel/10 border border-caramel/30 text-caramel text-xs sm:text-sm font-semibold tracking-widest uppercase">
+                                ☕ Sector C, DHA Phase 6, Lahore
+                            </div>
+                            
+                            <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-extrabold text-warmcream tracking-tight leading-tight">
+                                Fuel Your Day. <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-caramel via-warmcream to-caramel">
+                                    One Great Cup at a Time.
+                                </span>
+                            </h1>
+
+                            <p className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-warmcream/70 font-light leading-relaxed">
+                                Discover bold espresso, velvet iced lattes, organic Japanese matcha, and refreshing handcrafted creations brewed for coffee lovers.
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                                <a 
+                                    href="#menu" 
+                                    className="w-full sm:w-auto px-8 py-4 rounded-full bg-caramel hover:bg-caramel/90 text-espresso font-bold text-base transition-all shadow-xl shadow-caramel/20 hover:scale-105"
+                                >
+                                    Explore Our Menu
+                                </a>
+                                <a 
+                                    href="#visit" 
+                                    className="w-full sm:w-auto px-8 py-4 rounded-full bg-darkroast hover:bg-darkroast/80 text-warmcream border border-white/20 font-medium text-base transition-all hover:border-caramel/50"
+                                >
+                                    Find Our Café
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* OUR STORY / ABOUT */}
+                    <section id="story" className="py-24 bg-darkroast relative border-y border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                                
+                                <div className="space-y-6">
+                                    <div className="text-caramel uppercase text-xs font-bold tracking-widest">
+                                        Craftsmanship & Culture
+                                    </div>
+                                    <h2 className="text-3xl sm:text-4xl font-serif font-bold text-warmcream leading-snug">
+                                        Dedicated to the Art of Specialty Coffee
+                                    </h2>
+                                    <p className="text-warmcream/70 text-base leading-relaxed">
+                                        Located in the vibrant heart of Sector C, DHA Phase 6, Lahore, <strong>The Fuel Espresso</strong> is crafted for those who value rich flavor profiles, meticulously pulled espresso shots, and handcrafted beverages.
+                                    </p>
+                                    <p className="text-warmcream/70 text-base leading-relaxed">
+                                        From silky Spanish lattes to ceremonial Japanese matcha and decadent Belgian frappes, every cup is served with passion, consistency, and pure care.
+                                    </p>
+
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-4 border-t border-white/10">
+                                        <div>
+                                            <div className="font-serif text-3xl font-bold text-caramel">100%</div>
+                                            <div className="text-xs text-warmcream/60 mt-1">Specialty Arabica Beans</div>
+                                        </div>
+                                        <div>
+                                            <div className="font-serif text-3xl font-bold text-caramel">15+</div>
+                                            <div className="text-xs text-warmcream/60 mt-1">Signature Drinks</div>
+                                        </div>
+                                        <div>
+                                            <div className="font-serif text-3xl font-bold text-caramel">DHA 6</div>
+                                            <div className="text-xs text-warmcream/60 mt-1">Prime Location</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="relative">
+                                    <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                                        <img 
+                                            src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=800" 
+                                            alt="Specialty Coffee Pour" 
+                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+                                    <div className="absolute -bottom-6 -left-6 bg-espresso border border-caramel/40 p-6 rounded-xl shadow-2xl hidden sm:block">
+                                        <p className="text-caramel font-serif text-lg font-bold">"Bold, smooth & balanced."</p>
+                                        <p className="text-xs text-warmcream/60">Brewed fresh daily in Lahore.</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* DIGITAL MENU SECTION */}
+                    <section id="menu" className="py-24 bg-espresso relative">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                            
+                            <div className="text-center space-y-4 max-w-3xl mx-auto">
+                                <span className="text-caramel uppercase text-xs font-bold tracking-widest">Our Selection</span>
+                                <h2 className="text-3xl sm:text-5xl font-serif font-bold text-warmcream">Digital Menu</h2>
+                                <p className="text-warmcream/70 text-sm sm:text-base">
+                                    Filter through our coffee varieties, cold chillers, matcha, and signature frappes.
+                                </p>
+                            </div>
+
+                            {/* SEARCH & CATEGORY FILTERS */}
+                            <div className="space-y-6">
+                                {/* Search Bar */}
+                                <div className="max-w-md mx-auto relative">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search coffee, matcha, frappe..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-12 pr-4 py-3.5 rounded-full bg-darkroast border border-white/15 text-warmcream placeholder-warmcream/40 focus:outline-none focus:border-caramel transition-all text-sm"
+                                    />
+                                    <i data-lucide="search" className="w-5 h-5 text-warmcream/40 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                                </div>
+
+                                {/* Category Pills */}
+                                <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar justify-start sm:justify-center">
+                                    {MENU_CATEGORIES.map(cat => (
+                                        <button
+                                            key={cat}
+                                            onClick={() => setSelectedCategory(cat)}
+                                            className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all border ${
+                                                selectedCategory === cat 
+                                                ? 'bg-caramel text-espresso border-caramel font-bold' 
+                                                : 'bg-darkroast text-warmcream/80 border-white/10 hover:border-caramel/40'
+                                            }`}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* PRODUCT GRID */}
+                            {filteredProducts.length === 0 ? (
+                                <div className="text-center py-16 text-warmcream/50 space-y-2">
+                                    <i data-lucide="coffee" className="w-12 h-12 mx-auto text-caramel/40"></i>
+                                    <p>No products found matching your search criteria.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+                                    {filteredProducts.map(product => (
+                                        <div 
+                                            key={product.id}
+                                            className="group bg-darkroast rounded-2xl overflow-hidden border border-white/10 hover:border-caramel/50 transition-all duration-300 flex flex-col justify-between"
+                                        >
+                                            <div>
+                                                {/* Image */}
+                                                <div className="relative aspect-[4/3] overflow-hidden bg-espresso">
+                                                    <img 
+                                                        src={product.image} 
+                                                        alt={product.name} 
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                    {product.isSignature && (
+                                                        <span className="absolute top-3 left-3 bg-caramel text-espresso text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                                            ⭐ Signature
+                                                        </span>
+                                                    )}
+                                                    {product.isPopular && !product.isSignature && (
+                                                        <span className="absolute top-3 left-3 bg-espresso/80 text-caramel border border-caramel/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                                            Popular
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Details */}
+                                                <div className="p-5 space-y-2">
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <h3 className="font-serif font-bold text-lg text-warmcream group-hover:text-caramel transition-colors">
+                                                            {product.name}
+                                                        </h3>
+                                                    </div>
+                                                    <p className="text-xs text-warmcream/60 line-clamp-2 leading-relaxed">
+                                                        {product.description}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Price & Action */}
+                                            <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-white/5 mt-auto">
+                                                <div>
+                                                    <span className="text-xs text-warmcream/40 block">Price</span>
+                                                    <span className="font-bold text-caramel text-base">
+                                                        PKR {product.price}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    onClick={() => addToCart(product)}
+                                                    className="px-4 py-2 rounded-full bg-caramel/10 border border-caramel/40 text-caramel hover:bg-caramel hover:text-espresso font-semibold text-xs transition-all flex items-center gap-1.5"
+                                                >
+                                                    <i data-lucide="plus" className="w-4 h-4"></i>
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                        </div>
+                    </section>
+
+                    {/* SIGNATURE DRINKS SHOWCASE */}
+                    <section id="signature" className="py-24 bg-darkroast border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                                <div>
+                                    <span className="text-caramel uppercase text-xs font-bold tracking-widest">Handcrafted Perfection</span>
+                                    <h2 className="text-3xl sm:text-4xl font-serif font-bold text-warmcream mt-1">Signature Creations</h2>
+                                </div>
+                                <p className="text-warmcream/70 text-sm max-w-md">
+                                    Discover our top recommended drinks formulated with proprietary syrups, imported matcha, and double-origin espresso.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {MENU_PRODUCTS.filter(p => p.isSignature).slice(0, 3).map(sig => (
+                                    <div key={sig.id} className="relative rounded-2xl overflow-hidden border border-white/10 group">
+                                        <div className="aspect-[3/4] relative">
+                                            <img src={sig.image} alt={sig.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/40 to-transparent"></div>
+                                            <div className="absolute bottom-0 left-0 right-0 p-6 space-y-3">
+                                                <span className="text-caramel font-serif text-sm italic">House Specialty</span>
+                                                <h3 className="text-2xl font-serif font-bold text-warmcream">{sig.name}</h3>
+                                                <p className="text-xs text-warmcream/70">{sig.description}</p>
+                                                <div className="flex items-center justify-between pt-2">
+                                                    <span className="text-caramel font-bold text-lg">PKR {sig.price}</span>
+                                                    <button 
+                                                        onClick={() => addToCart(sig)}
+                                                        className="px-4 py-2 rounded-full bg-caramel text-espresso font-bold text-xs hover:bg-caramel/90 transition-all"
+                                                    >
+                                                        Order Item
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* PHOTO GALLERY LIGHTBOX */}
+                    <section id="gallery" className="py-24 bg-espresso">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                            <div className="text-center space-y-2">
+                                <span className="text-caramel uppercase text-xs font-bold tracking-widest">Visual Experience</span>
+                                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-warmcream">Café Gallery</h2>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                                {GALLERY_IMAGES.map((img, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        onClick={() => setLightboxImg(img.url)}
+                                        className="aspect-square rounded-xl overflow-hidden cursor-pointer border border-white/10 group relative"
+                                    >
+                                        <img src={img.url} alt={img.caption} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <div className="absolute inset-0 bg-espresso/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 text-center">
+                                            <span className="text-warmcream text-xs sm:text-sm font-medium">{img.caption}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* VISIT US / LOCATION SECTION */}
+                    <section id="visit" className="py-24 bg-darkroast border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                                
+                                <div className="space-y-8">
+                                    <div>
+                                        <span className="text-caramel uppercase text-xs font-bold tracking-widest">Find Us In Lahore</span>
+                                        <h2 className="text-3xl sm:text-4xl font-serif font-bold text-warmcream mt-1">Visit The Fuel Espresso</h2>
+                                    </div>
+
+                                    <div className="space-y-6 text-sm text-warmcream/80">
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 rounded-full bg-caramel/10 border border-caramel/30 text-caramel shrink-0">
+                                                <i data-lucide="map-pin" className="w-5 h-5"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-warmcream">Address</h4>
+                                                <p className="text-warmcream/70 mt-1">{CONFIG.address}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 rounded-full bg-caramel/10 border border-caramel/30 text-caramel shrink-0">
+                                                <i data-lucide="phone" className="w-5 h-5"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-warmcream">Phone Number</h4>
+                                                <a href={`tel:${CONFIG.formattedPhone}`} className="text-caramel hover:underline mt-1 inline-block">
+                                                    {CONFIG.phone}
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 rounded-full bg-caramel/10 border border-caramel/30 text-caramel shrink-0">
+                                                <i data-lucide="clock" className="w-5 h-5"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-warmcream">Opening Hours</h4>
+                                                <p className="text-warmcream/70 mt-1">{CONFIG.openingHours}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-4 pt-4">
+                                        <a 
+                                            href={CONFIG.mapsLink} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="px-6 py-3 rounded-full bg-caramel text-espresso font-bold text-sm hover:bg-caramel/90 transition-all flex items-center gap-2"
+                                        >
+                                            <i data-lucide="navigation" className="w-4 h-4"></i>
+                                            Open in Google Maps
+                                        </a>
+                                        <a 
+                                            href={CONFIG.foodpandaLink} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="px-6 py-3 rounded-full bg-darkroast border border-white/20 text-warmcream hover:border-caramel text-sm font-medium transition-all"
+                                        >
+                                            View Foodpanda Listing
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* MAP PLACEHOLDER / CTA CARD */}
+                                <div className="bg-espresso rounded-2xl border border-white/10 p-8 space-y-6 text-center">
+                                    <div className="w-16 h-16 rounded-full bg-caramel/10 border border-caramel/30 text-caramel flex items-center justify-center mx-auto">
+                                        <i data-lucide="coffee" className="w-8 h-8"></i>
+                                    </div>
+                                    <h3 className="text-2xl font-serif font-bold text-warmcream">DHA Phase 6 Location</h3>
+                                    <p className="text-sm text-warmcream/70 leading-relaxed">
+                                        Conveniently situated inside Sector C, DHA Phase 6. Drop in for your morning espresso fix, late-night iced latte, or takeaway order.
+                                    </p>
+                                    <a 
+                                        href={CONFIG.mapsLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-block w-full py-3.5 rounded-full bg-darkroast hover:bg-caramel hover:text-espresso text-caramel border border-caramel/40 font-bold text-sm transition-all"
+                                    >
+                                        Get Directions
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* FOOTER */}
+                    <footer className="bg-espresso border-t border-white/10 py-12 text-warmcream/60 text-xs">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-caramel/20 text-caramel font-serif font-bold flex items-center justify-center">F</div>
+                                    <span className="font-serif text-lg font-bold text-warmcream">THE FUEL ESPRESSO</span>
+                                </div>
+
+                                <div className="flex flex-wrap justify-center gap-6 text-warmcream/80">
+                                    <a href="#home" className="hover:text-caramel">Home</a>
+                                    <a href="#story" className="hover:text-caramel">Story</a>
+                                    <a href="#menu" className="hover:text-caramel">Menu</a>
+                                    <a href="#gallery" className="hover:text-caramel">Gallery</a>
+                                    <a href="#visit" className="hover:text-caramel">Visit Us</a>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-white/5 pt-6 text-center space-y-2">
+                                <p>© {new Date().getFullYear()} The Fuel Espresso. All Rights Reserved.</p>
+                                <p className="text-[11px] text-warmcream/40">
+                                    Demo concept created for client evaluation. All trademarks, names, and references belong to their respective owners.
+                                </p>
+                            </div>
+                        </div>
+                    </footer>
+
+                    {/* CART DRAWER SLIDE-OVER */}
+                    {isCartOpen && (
+                        <div className="fixed inset-0 z-50 overflow-hidden bg-black/70 backdrop-blur-sm flex justify-end">
+                            <div className="w-full max-w-md bg-darkroast h-full border-l border-white/10 flex flex-col justify-between p-6 overflow-y-auto">
+                                <div>
+                                    <div className="flex items-center justify-between pb-6 border-b border-white/10">
+                                        <h3 className="text-xl font-serif font-bold text-warmcream flex items-center gap-2">
+                                            <i data-lucide="shopping-bag" className="w-5 h-5 text-caramel"></i>
+                                            Your Cart ({cartTotalCount})
+                                        </h3>
+                                        <button onClick={() => setIsCartOpen(false)} className="p-2 text-warmcream/60 hover:text-warmcream">
+                                            <i data-lucide="x" className="w-6 h-6"></i>
+                                        </button>
+                                    </div>
+
+                                    {cart.length === 0 ? (
+                                        <div className="py-20 text-center text-warmcream/50 space-y-3">
+                                            <i data-lucide="shopping-cart" className="w-12 h-12 mx-auto text-warmcream/20"></i>
+                                            <p>Your shopping cart is currently empty.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="py-6 space-y-4">
+                                            {cart.map(item => (
+                                                <div key={item.id} className="flex items-center justify-between gap-4 p-3 rounded-xl bg-espresso border border-white/5">
+                                                    <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-lg shrink-0" />
+                                                    <div className="flex-1">
+                                                        <h4 className="text-sm font-bold text-warmcream">{item.name}</h4>
+                                                        <p className="text-xs text-caramel font-semibold">PKR {item.price}</p>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 bg-darkroast rounded-full px-2 py-1 border border-white/10">
+                                                        <button onClick={() => updateQuantity(item.id, -1)} className="text-warmcream/70 hover:text-warmcream px-1">-</button>
+                                                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                                                        <button onClick={() => updateQuantity(item.id, 1)} className="text-warmcream/70 hover:text-warmcream px-1">+</button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {cart.length > 0 && (
+                                    <div className="pt-6 border-t border-white/10 space-y-4">
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between text-warmcream/70">
+                                                <span>Subtotal</span>
+                                                <span>PKR {subtotal}</span>
+                                            </div>
+                                            <div className="flex justify-between font-bold text-warmcream text-base pt-2 border-t border-white/5">
+                                                <span>Total Amount</span>
+                                                <span className="text-caramel">PKR {subtotal}</span>
+                                            </div>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => {
+                                                setIsCartOpen(false);
+                                                setIsCheckoutOpen(true);
+                                            }}
+                                            className="w-full py-4 rounded-full bg-caramel text-espresso font-bold text-center text-sm hover:bg-caramel/90 transition-all shadow-lg"
+                                        >
+                                            Proceed to Checkout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CHECKOUT MODAL */}
+                    {isCheckoutOpen && (
+                        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                            <div className="bg-darkroast border border-white/10 rounded-2xl w-full max-w-lg p-6 sm:p-8 space-y-6 my-8">
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <h3 className="text-2xl font-serif font-bold text-warmcream">Checkout & Order</h3>
+                                    <button onClick={() => setIsCheckoutOpen(false)} className="text-warmcream/60 hover:text-warmcream">
+                                        <i data-lucide="x" className="w-6 h-6"></i>
+                                    </button>
+                                </div>
+
+                                <form onSubmit={handleWhatsAppCheckout} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-warmcream/80 mb-1">Your Full Name *</label>
+                                        <input 
+                                            type="text"
+                                            required
+                                            value={customerInfo.name}
+                                            onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                                            placeholder="e.g. Ali Ahmed"
+                                            className="w-full px-4 py-3 rounded-xl bg-espresso border border-white/10 text-warmcream text-sm focus:outline-none focus:border-caramel"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-warmcream/80 mb-1">Mobile / WhatsApp Number *</label>
+                                        <input 
+                                            type="tel"
+                                            required
+                                            value={customerInfo.phone}
+                                            onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                                            placeholder="0300 1234567"
+                                            className="w-full px-4 py-3 rounded-xl bg-espresso border border-white/10 text-warmcream text-sm focus:outline-none focus:border-caramel"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setCustomerInfo({...customerInfo, orderType: 'pickup'})}
+                                            className={`py-3 rounded-xl border text-xs font-bold transition-all ${
+                                                customerInfo.orderType === 'pickup'
+                                                ? 'bg-caramel text-espresso border-caramel'
+                                                : 'bg-espresso text-warmcream/70 border-white/10'
+                                            }`}
+                                        >
+                                            Pickup at Café
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCustomerInfo({...customerInfo, orderType: 'delivery'})}
+                                            className={`py-3 rounded-xl border text-xs font-bold transition-all ${
+                                                customerInfo.orderType === 'delivery'
+                                                ? 'bg-caramel text-espresso border-caramel'
+                                                : 'bg-espresso text-warmcream/70 border-white/10'
+                                            }`}
+                                        >
+                                            Delivery (DHA 6)
+                                        </button>
+                                    </div>
+
+                                    {customerInfo.orderType === 'delivery' && (
+                                        <div>
+                                            <label className="block text-xs font-semibold text-warmcream/80 mb-1">Delivery Address *</label>
+                                            <textarea 
+                                                required
+                                                rows="2"
+                                                value={customerInfo.address}
+                                                onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
+                                                placeholder="Phase 6, Block, House No..."
+                                                className="w-full px-4 py-3 rounded-xl bg-espresso border border-white/10 text-warmcream text-sm focus:outline-none focus:border-caramel"
+                                            ></textarea>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-warmcream/80 mb-1">Special Notes (Optional)</label>
+                                        <input 
+                                            type="text"
+                                            value={customerInfo.notes}
+                                            onChange={(e) => setCustomerInfo({...customerInfo, notes: e.target.value})}
+                                            placeholder="Extra ice, oat milk, less sugar..."
+                                            className="w-full px-4 py-3 rounded-xl bg-espresso border border-white/10 text-warmcream text-sm focus:outline-none focus:border-caramel"
+                                        />
+                                    </div>
+
+                                    <div className="pt-4 border-t border-white/10 space-y-2 text-xs">
+                                        <div className="flex justify-between text-warmcream/70">
+                                            <span>Subtotal</span>
+                                            <span>PKR {subtotal}</span>
+                                        </div>
+                                        {customerInfo.orderType === 'delivery' && (
+                                            <div className="flex justify-between text-warmcream/70">
+                                                <span>Delivery Fee</span>
+                                                <span>PKR {CONFIG.deliveryFee}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between font-bold text-warmcream text-sm pt-2">
+                                            <span>Total</span>
+                                            <span className="text-caramel">PKR {finalTotal}</span>
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        type="submit"
+                                        className="w-full py-4 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg"
+                                    >
+                                        <i data-lucide="message-square" className="w-4 h-4"></i>
+                                        Send Order via WhatsApp
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* LIGHTBOX MODAL */}
+                    {lightboxImg && (
+                        <div 
+                            onClick={() => setLightboxImg(null)}
+                            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer"
+                        >
+                            <img src={lightboxImg} alt="Enlarged gallery preview" className="max-w-full max-h-[90vh] object-contain rounded-lg" />
+                        </div>
+                    )}
+
+                </div>
+            );
+        }
+
+        // Render Application
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+        // Initialize Lucide Icons after render
+        setTimeout(() => {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }, 500);
+    </script>
+</body>
+</html>
